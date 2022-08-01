@@ -11,8 +11,6 @@ const client = new Client({intents: myIntents});
 // Notify progress
 client.on('ready', function(e){
     //prints to the terminal that the bot has been logged in
-    console.log(`Logged in as ${client.user.tag}!`);
-    //test printing a colored terminal output for certain events
     console.log("\x1b[32m%s\x1b[0m", `Logged in as ${client.user.tag}!`);
     /* 
     Refer to the link below explaining the purpose of all the weird expressions and arguements in the first half og the console.log command
@@ -27,18 +25,20 @@ client.on('ready', function(e){
 // Authenticate
 client.login(process.env.TOKEN);
 
-
-
-
-
-/* const client = new Client({
-    intents: [
-        GatewayIntentBits.GUILDS =(1 << 0),
-        GatewayIntentBits.GUILD_MESSAGES=(1 << 9)
-
-        GatewayIntentBits.Guilds,
-        GatewayIntentBits.GuildMessages
-    ]
-});
-
- */
+//start of command handler
+client.on("messageCreate", message => {
+    if (message.author.bot) return;
+    // This is where we'll put our code.
+    if (message.content.indexOf(config.prefix) !== 0) return;
+  
+    const args = message.content.slice(config.prefix.length).trim().split(/ +/g);
+    const command = args.shift().toLowerCase();
+  
+    if (command === 'ping') {
+      message.channel.send('Pong!');
+    } else
+  
+    if (command === 'blah') {
+      message.channel.send('Meh.');
+    }
+  });
