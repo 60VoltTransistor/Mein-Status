@@ -4,8 +4,11 @@ require('dotenv').config()
 const { Client, GatewayIntentBits } = require('discord.js')
 const client = new Client({
     intents: [
-        GatewayIntentBits.GUILDS =(1 << 0),
-        GatewayIntentBits.GUILD_MESSAGES=(1 << 9)
+        /* GatewayIntentBits.GUILDS =(1 << 0),
+        GatewayIntentBits.GUILD_MESSAGES=(1 << 9) */
+
+        GatewayIntentBits.Guilds,
+        GatewayIntentBits.GuildMessages
     ]
 });
 // Notify progress
