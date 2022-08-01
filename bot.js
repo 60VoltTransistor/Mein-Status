@@ -29,7 +29,7 @@ client.login(process.env.TOKEN);
 client.on("messageCreate", message => {
     if (message.author.bot) return;
     // This is where we'll put our code.
-    if (message.content.indexOf(config.prefix) !== 0) return;
+    if (message.content.indexOf('!') !== 0) return;
   
     const args = message.content.slice(config.prefix.length).trim().split(/ +/g);
     const command = args.shift().toLowerCase();
@@ -39,6 +39,6 @@ client.on("messageCreate", message => {
     } else
   
     if (command === 'blah') {
-      message.channel.send('Meh.');
+      message.channel.send('blah');
     }
   });
