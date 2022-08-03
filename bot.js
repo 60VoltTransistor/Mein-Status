@@ -1,13 +1,16 @@
 // Setup our environment variables via dotenv
 require('dotenv').config();
+const fs = require('node:fs');
+const path = require('node:path');
+const { token } = require('./config.json');
 // Import relevant classes from discord.js
 const { Client, GatewayIntentBits, IntentsBitField, Collection } = require('discord.js');
 
 const myIntents = new IntentsBitField();
 //add the different intents that you intend to use in this string
-myIntents.add(IntentsBitField.Flags.Guilds, IntentsBitField.Flags.GuildMessages);
-
+myIntents.add(IntentsBitField.Flags.Guilds, IntentsBitField.Flags.GuildMessages, IntentsBitField.Flags.MessageContent);
 const client = new Client({intents: myIntents});
+
 // Notify progress
 client.on('ready', function(e){
     //prints to the terminal that the bot has been logged in
@@ -20,9 +23,24 @@ client.on('ready', function(e){
     The link below also includes supplemental information to the earlier link, it has the SGR parameters
     https://en.wikipedia.org/wiki/ANSI_escape_code#SGR_(Select_Graphic_Rendition)_parameters
     */
-
+   console.log('Bot Ready! :)');
 })
 
+var i = 0;
+client.on('messageCreate', (message) => {
+  i++;
+  if(message.content.toLowerCase().includes('!hey')){
+    if (message.author.bot) return;
+    message.channel.send('Whats up?');
+  }
+  //for debug purposes, do not include in the final product
+  console.log(i,' : ', message.content);
+});
+
+// Authenticate
+client.login(process.env.TOKEN);
+
+/* 
 //loads out config file
 const fs = require('fs');
 const config = require("./config.json");
@@ -46,7 +64,7 @@ for (const file of commands) {
   console.log(`Attempting to load command ${commandName}`);
   client.commands.set(commandName, command);
 }
-
+ */
 /* 
 //start of command handler
 client.on("messageCreate", message => {
@@ -67,5 +85,3 @@ client.on("messageCreate", message => {
   });
  */
 
-// Authenticate
-client.login(process.env.TOKEN);
