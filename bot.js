@@ -2,14 +2,22 @@
 require('dotenv').config();
 const fs = require('node:fs');
 const path = require('node:path');
-const { token } = require('./config.json');
+const config = require('./config.json');
 // Import relevant classes from discord.js
 const { Client, GatewayIntentBits, IntentsBitField, Collection } = require('discord.js');
-
 const myIntents = new IntentsBitField();
 //add the different intents that you intend to use in this string
 myIntents.add(IntentsBitField.Flags.Guilds, IntentsBitField.Flags.GuildMessages, IntentsBitField.Flags.MessageContent);
 const client = new Client({intents: myIntents});
+
+const Discord = require("discord.js");
+client.commands  = new Discord.Collection();
+const commands = fs.readdirSync("./commands").filter(file => file.endsWith(".js"));
+for(file of commands){
+  const commandName = file.split(".")[0];
+  const command = require(`./commands/${commandName}`);
+  client.commands.set(commandName, command);
+}
 
 // Notify progress
 client.on('ready', function(e){
@@ -26,62 +34,29 @@ client.on('ready', function(e){
    console.log('Bot Ready! :)');
 })
 
-var i = 0;
 client.on('messageCreate', (message) => {
-  i++;
-  if(message.content.toLowerCase().includes('!hey')){
-    if (message.author.bot) return;
-    message.channel.send('Whats up?');
+  if(message.content.startsWith(config.prefix)){
+    const args = message.content.slice(config.prefix.length).trim().split(/ +/g);
+    const commandName = args.shift();
+    const command = client.commands.get(commandName);
+    if(!command) return message.channel.send({content:  "That command doesn't exist!"});
+    command.run(client, message, args);
   }
-  //for debug purposes, do not include in the final product
-  console.log(i,' : ', message.content);
 });
 
 // Authenticate
 client.login(process.env.TOKEN);
 
 /* 
-//loads out config file
-const fs = require('fs');
-const config = require("./config.json");
-
-// We also need to make sure we're attaching the config to the CLIENT so it's accessible everywhere!
-client.config = config;
-client.commands = new Collection();
-
-const events = fs.readdirSync("./events").filter(file => file.endsWith(".js"));
-for (const file of events) {
-  const eventName = file.split(".")[0];
-  const event = require(`./events/${file}`);
-  client.on(eventName, event.bind(null, client));
-}
-
-const commands = fs.readdirSync("./commands").filter(file => file.endsWith(".js"));
-for (const file of commands) {
-  const commandName = file.split(".")[0];
-  const command = require(`./commands/${file}`);
-
-  console.log(`Attempting to load command ${commandName}`);
-  client.commands.set(commandName, command);
-}
- */
-/* 
-//start of command handler
-client.on("messageCreate", message => {
-    if (message.author.bot) return;
-    // This is where we'll put our code.
-    if (message.content.indexOf('!') !== 0) return;
-  
-    const args = message.content.slice(config.prefix.length).trim().split(/ +/g);
-    const command = args.shift().toLowerCase();
-  
-    if (command === 'ping') {
-      message.channel.send('Pong!');
-    } else
-  
-    if (command === 'blah') {
-      message.channel.send('blah');
-    }
-  });
+var i = 0, j=0;
+client.on('messageCreate', (message) => {
+  i++;
+  if((!message.content.toLowerCase().includes(config.prefix,'ping')) || message.author.bot) return;
+  j++;
+  message.channel.send('pong');
+  //for debug purposes, do not include in the final product
+  if(config.debug_mode == 'false') return;
+  console.log(i,',', j ,' : ', message.content);
+});
  */
 
