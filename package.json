@@ -1,6 +1,8 @@
 {
   "dependencies": {
     "@discordjs/rest": "^1.0.1",
+    "@sapphire/time-utilities": "^1.7.6",
+    "colorette": "^2.0.19",
     "discord.js": "^14.1.2",
     "dotenv": "^16.0.1",
     "fs": "^0.0.1-security",

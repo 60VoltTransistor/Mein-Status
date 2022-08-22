@@ -1,4 +1,6 @@
-const config = require("../config.json");
+//this code doesn't do anything at the moment, if nothing changes then remove this folder and code files
+
+/* const config = require("../config.json");
 
 module.exports = (client, message) => {
     // Ignore all bots
@@ -16,7 +18,29 @@ module.exports = (client, message) => {
   
     // If that command doesn't exist, silently exit and do nothing
     if (!cmd) return;
-  
+    console.log("Hello World");
     // Run the command
     cmd.run(client, message, args);
-  };
+  }; */
+
+const logger = require("../modules/logger.js");
+const config = require('../config.json');
+
+ module.exports = async(client, message) => {
+  if(message.content.startsWith(config.prefix)){
+    const args = message.content.slice(config.prefix.length).trim().split(/ +/g);
+    const commandName = args.shift();
+    const command = client.commands.get(commandName);
+    if(!command) return message.channel.send({content:  "That command doesn't exist!"});
+    try{
+      await command.run(client, message, args);
+      if(config.debug_mode == 'true'){
+        console.log("Message >",message.content);
+      }
+    }
+    catch (e) {
+      message.channel.send({ content: `There was a problem with your request.\n\`\`\`${e.message}\`\`\`` })
+      .catch(e => console.error("An error occurred replying on an error", e));
+    }
+  }
+ }
